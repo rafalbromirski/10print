@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	rows = flag.Int("rows", 16, "Number of rows")
 	cols = flag.Int("cols", 8, "Number of columns")
+	rows = flag.Int("rows", 16, "Number of rows")
 )
 
 // Grid is responsible for generating random "grid"
@@ -21,16 +21,20 @@ var (
 //  > 10 PRINT CHR$(205.5+RND(1)); : GOTO 10
 type Grid struct {
 	r    *rand.Rand
-	rows int
 	cols int
+	rows int
 }
 
 // NewGrid constructs NewGrid
-func NewGrid(rows, cols int) *Grid {
+func NewGrid(cols, rows int) *Grid {
 	seed := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(seed)
 
-	return &Grid{r, rows, cols}
+	return &Grid{
+		r:    r,
+		cols: cols,
+		rows: rows,
+	}
 }
 
 // RandomChar randomly picks "\" or "/""
@@ -46,10 +50,10 @@ func (g *Grid) RandomChar() string {
 func (g *Grid) Generate() string {
 	var arr []string
 
-	for i := 0; i < g.cols; i++ {
+	for i := 0; i < g.rows; i++ {
 		var s string
 
-		for j := 0; j < g.rows; j++ {
+		for j := 0; j < g.cols; j++ {
 			s += g.RandomChar()
 		}
 
@@ -62,7 +66,7 @@ func (g *Grid) Generate() string {
 func main() {
 	flag.Parse()
 
-	g := NewGrid(*rows, *cols)
+	g := NewGrid(*cols, *rows)
 	msg := g.Generate()
 
 	log.Printf("\n%s\n", msg)
